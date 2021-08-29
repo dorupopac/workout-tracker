@@ -75,6 +75,7 @@ class App {
   #mapZoomLevel = 13;
   #mapEvent;
   #workouts = [];
+  #formDisplayed = false;
 
   constructor() {
     // Get user's position
@@ -119,9 +120,15 @@ class App {
   }
 
   _showForm(mapE) {
-    this.#mapEvent = mapE;
-    form.classList.remove('hidden');
-    inputDistance.focus();
+    if(!this.#formDisplayed) {
+      this.#mapEvent = mapE;
+      form.classList.remove('hidden');
+      inputDistance.focus();
+    }
+    if(this.#formDisplayed) {
+      form.classList.add('hidden');
+    }
+    this.#formDisplayed = !this.#formDisplayed
   }
 
   _hideForm() {
@@ -197,6 +204,8 @@ class App {
 
     // Set local storage to all workouts
     this._setLocalStorage();
+
+    this.#formDisplayed = !this.#formDisplayed
   }
 
   _renderWorkoutMarker(workout) {
