@@ -72,7 +72,7 @@ const inputElevation = document.querySelector('.form__input--elevation');
 
 class App {
   #map;
-  #mapZoomLevel = 15;
+  #mapZoomLevel = 13;
   #mapEvent;
   #workouts = [];
   #formDisplayed = false;
@@ -284,8 +284,6 @@ class App {
   }
 
   _moveToPopup(e) {
-    e.stopPropagation();
-
     const workoutEl = e.target.closest('.workout');
     const closeEl = e.target.closest('.workout__close');
 
@@ -321,8 +319,6 @@ class App {
   }
 
   _deleteWorkout(e) {
-    e.stopPropagation();
-
     const workoutEl = e.target.closest('.workout');
     const closeEl = e.target.closest('.workout__close');
 
@@ -331,8 +327,6 @@ class App {
     const workout = this.#workouts.find(
       work => work.id === workoutEl.dataset.id
     );
-
-    if (!this.#workouts.includes(workout)) return;
 
     this.#workouts = this.#workouts.filter(work => work.id !== workout.id);
 
