@@ -69,6 +69,7 @@ const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
+const resetButton = document.querySelector('.reset__workouts');
 
 class App {
   #map;
@@ -85,11 +86,16 @@ class App {
     // Get data from local storage
     this._getLocalStorage();
 
+    // Render reset button
+    if (this.#workouts.length !== 0)
+      resetButton.classList.remove('reset__workouts--hidden');
+
     // Attach event handlers
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
     containerWorkouts.addEventListener('click', this._deleteWorkout.bind(this));
+    resetButton.addEventListener('click', this._resetWorkouts);
   }
 
   _getPosition() {
@@ -151,11 +157,11 @@ class App {
   }
 
   _newWorkout(e) {
+    e.preventDefault();
+
     const validInputs = (...inputs) =>
       inputs.every(inp => Number.isFinite(inp));
     const allPositive = (...inputs) => inputs.every(inp => inp > 0);
-
-    e.preventDefault();
 
     // Get data from form
     const type = inputType.value;
@@ -206,6 +212,10 @@ class App {
 
     // Set local storage to all workouts
     this._setLocalStorage();
+
+    // Render reset button
+    if (resetButton.classList.contains('reset__workouts--hidden'))
+      resetButton.classList.remove('reset__workouts--hidden');
 
     this.#formDisplayed = !this.#formDisplayed;
   }
@@ -337,9 +347,15 @@ class App {
     workoutInList.remove();
 
     this._setLocalStorage();
+
+    if (this.#workouts.length !== 0) return;
+    resetButton.classList.add('reset__workouts--hidden');
   }
 
-  reset() {
+  _resetWorkouts() {
+    const confirm = window.confirm('Are you sure you want to delete all workouts?');
+    if(!confirm) return;
+
     localStorage.removeItem('workouts');
     location.reload();
   }
