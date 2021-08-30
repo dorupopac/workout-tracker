@@ -1,6 +1,7 @@
 :root {
   --color-brand--1: #ffb545;
   --color-brand--2: #00c46a;
+
   --color-dark--1: #2d3439;
   --color-dark--2: #42484d;
   --color-light--1: #aaa;
@@ -20,14 +21,16 @@ html {
 }
 
 body {
-  font-family: "Manrope", sans-serif;
+  font-family: 'Manrope', sans-serif;
   color: var(--color-light--2);
   font-weight: 400;
   line-height: 1.6;
   height: 100vh;
   overscroll-behavior-y: none;
+
   background-color: #fff;
   padding: 2.5rem;
+
   display: flex;
 }
 
@@ -69,15 +72,19 @@ a:visited {
   padding: 1.5rem 2.25rem;
   margin-bottom: 1.75rem;
   cursor: pointer;
+
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 0.75rem 1.5rem;
-  position: relative;
-}
-.workout:hover .workout__close {
-  opacity: 1;
-}
 
+  position: relative;
+
+  &:hover {
+    .workout__close {
+      opacity: 1;
+    }
+  }
+}
 .workout__close {
   position: absolute;
   font-size: 2rem;
@@ -86,11 +93,9 @@ a:visited {
   opacity: 0;
   transition: 0.3s;
 }
-
 .workout--running {
   border-left: 5px solid var(--color-brand--2);
 }
-
 .workout--cycling {
   border-left: 5px solid var(--color-brand--1);
 }
@@ -98,7 +103,7 @@ a:visited {
 .workout__title {
   font-size: 1.7rem;
   font-weight: 600;
-  grid-column: 1/-1;
+  grid-column: 1 / -1;
 }
 
 .workout__details {
@@ -129,9 +134,11 @@ a:visited {
   border-radius: 5px;
   padding: 1.5rem 2.75rem;
   margin-bottom: 1.75rem;
+
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.5rem 2.5rem;
+
   /* Match height and activity boxes */
   height: 9.25rem;
   transition: all 0.5s, transform 1ms;
@@ -224,9 +231,6 @@ a:visited {
 .running-popup .leaflet-popup-content-wrapper {
   border-left: 5px solid var(--color-brand--2);
 }
-
 .cycling-popup .leaflet-popup-content-wrapper {
   border-left: 5px solid var(--color-brand--1);
 }
-
-/*# sourceMappingURL=style.css.map */

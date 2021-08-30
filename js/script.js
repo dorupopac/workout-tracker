@@ -72,10 +72,11 @@ const inputElevation = document.querySelector('.form__input--elevation');
 
 class App {
   #map;
-  #mapZoomLevel = 13;
+  #mapZoomLevel = 15;
   #mapEvent;
   #workouts = [];
   #formDisplayed = false;
+  #marker = [];
 
   constructor() {
     // Get user's position
@@ -83,11 +84,12 @@ class App {
 
     // Get data from local storage
     this._getLocalStorage();
-    
+
     // Attach event handlers
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
+    containerWorkouts.addEventListener('click', this._deleteWorkout.bind(this));
   }
 
   _getPosition() {
@@ -116,19 +118,19 @@ class App {
     // Handling clicks on map
     this.#map.on('click', this._showForm.bind(this));
 
-    this.#workouts.forEach(work => this._renderWorkoutMarker(work))
+    this.#workouts.forEach(work => this._renderWorkoutMarker(work));
   }
 
   _showForm(mapE) {
-    if(!this.#formDisplayed) {
+    if (!this.#formDisplayed) {
       this.#mapEvent = mapE;
       form.classList.remove('hidden');
       inputDistance.focus();
     }
-    if(this.#formDisplayed) {
+    if (this.#formDisplayed) {
       form.classList.add('hidden');
     }
-    this.#formDisplayed = !this.#formDisplayed
+    this.#formDisplayed = !this.#formDisplayed;
   }
 
   _hideForm() {
@@ -205,30 +207,33 @@ class App {
     // Set local storage to all workouts
     this._setLocalStorage();
 
-    this.#formDisplayed = !this.#formDisplayed
+    this.#formDisplayed = !this.#formDisplayed;
   }
 
   _renderWorkoutMarker(workout) {
-    L.marker(workout.coords)
-      .addTo(this.#map)
-      .bindPopup(
-        L.popup({
-          maxWidth: 250,
-          minWidth: 100,
-          autoClose: false,
-          closeOnClick: false,
-          className: `${workout.type}-popup`,
-        })
-      )
-      .setPopupContent(
-        `${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♂️'} ${workout.description}`
-      )
-      .openPopup();
+    this.#marker.push(
+      L.marker(workout.coords)
+        .addTo(this.#map)
+        .bindPopup(
+          L.popup({
+            maxWidth: 250,
+            minWidth: 100,
+            autoClose: false,
+            closeOnClick: false,
+            className: `${workout.type}-popup`,
+          })
+        )
+        .setPopupContent(
+          `${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♂️'} ${workout.description}`
+        )
+        .openPopup()
+    );
   }
 
   _renderWorkout(workout) {
     let html = `
       <li class="workout workout--${workout.type}" data-id="${workout.id}">
+        <span class="workout__close">&#10005;</span>
         <h2 class="workout__title">${workout.description}</h2>
         <div class="workout__details">
           <span class="workout__icon">${
@@ -279,8 +284,12 @@ class App {
   }
 
   _moveToPopup(e) {
-    const workoutEl = e.target.closest('.workout');
+    e.stopPropagation();
 
+    const workoutEl = e.target.closest('.workout');
+    const closeEl = e.target.closest('.workout__close');
+
+    if (closeEl) return;
     if (!workoutEl) return;
 
     const workout = this.#workouts.find(
@@ -299,16 +308,41 @@ class App {
   }
 
   _setLocalStorage() {
-    localStorage.setItem('workouts', JSON.stringify(this.#workouts))
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
   }
 
   _getLocalStorage() {
-    const data = JSON.parse(localStorage.getItem('workouts'))
+    const data = JSON.parse(localStorage.getItem('workouts'));
 
-    if(!data) return;
+    if (!data) return;
 
     this.#workouts = data;
-    this.#workouts.forEach(work => this._renderWorkout(work))
+    this.#workouts.forEach(work => this._renderWorkout(work));
+  }
+
+  _deleteWorkout(e) {
+    e.stopPropagation();
+
+    const workoutEl = e.target.closest('.workout');
+    const closeEl = e.target.closest('.workout__close');
+
+    if (!closeEl) return;
+
+    const workout = this.#workouts.find(
+      work => work.id === workoutEl.dataset.id
+    );
+
+    if (!this.#workouts.includes(workout)) return;
+
+    this.#workouts = this.#workouts.filter(work => work.id !== workout.id);
+
+    this.#map.removeLayer(
+      this.#marker.find(marker => marker._latlng.lat === workout.coords[0])
+    );
+    const workoutInList = closeEl.closest('.workout');
+    workoutInList.remove();
+
+    this._setLocalStorage();
   }
 
   reset() {
