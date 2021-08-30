@@ -47,6 +47,24 @@ a:visited {
   padding: 3rem 5rem 4rem 5rem;
   display: flex;
   flex-direction: column;
+  position: relative;
+
+  .reset__workouts--hidden {
+    display: none;
+  }
+  
+  .reset__workouts {
+    position: absolute;
+    bottom: 1rem;
+    right: 2rem;
+    font-size: 1.5rem;
+    transition: color 0.2s;
+
+    &:hover {
+      cursor: pointer;
+      color: red;
+    }
+  }
 }
 
 .logo {
