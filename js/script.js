@@ -71,6 +71,8 @@ const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 const resetButton = document.querySelector('.reset__workouts');
 
+const htmlErrorEl = document.querySelector('.workout__error--message');
+
 class App {
   #map;
   #mapZoomLevel = 13;
@@ -95,7 +97,7 @@ class App {
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
     containerWorkouts.addEventListener('click', this._deleteWorkout.bind(this));
-    resetButton.addEventListener('click', this._resetWorkouts);
+    resetButton.addEventListener('click', this._resetWorkouts.bind(this));
   }
 
   _getPosition() {
@@ -135,6 +137,15 @@ class App {
     }
     if (this.#formDisplayed) {
       form.classList.add('hidden');
+      inputDistance.value =
+        inputDuration.value =
+        inputCadence.value =
+        inputElevation.value =
+          '';
+
+      if (!htmlErrorEl.classList.contains('workout__error--message--hidden')) {
+        htmlErrorEl.classList.add('workout__error--message--hidden');
+      }
     }
     this.#formDisplayed = !this.#formDisplayed;
   }
@@ -180,8 +191,15 @@ class App {
         // !Number.isFinite(cadence)
         !validInputs(distance, duration, cadence) ||
         !allPositive(distance, duration, cadence)
-      )
-        return alert('Inputs have to be positive numbers!');
+      ) {
+        form.classList.add('workout__error');
+        setTimeout(() => form.classList.remove('workout__error'), 500);
+
+        if (htmlErrorEl.classList.contains('workout__error--message--hidden')) {
+          htmlErrorEl.classList.remove('workout__error--message--hidden');
+        }
+        return;
+      }
 
       workout = new Running([lat, lng], distance, duration, cadence);
     }
@@ -192,10 +210,22 @@ class App {
       if (
         !validInputs(distance, duration, elevation) ||
         !allPositive(distance, duration)
-      )
-        return alert('Inputs have to be positive numbers!');
+      ) {
+        form.classList.add('workout__error');
+        setTimeout(() => form.classList.remove('workout__error'), 500);
+
+        if (htmlErrorEl.classList.contains('workout__error--message--hidden')) {
+          htmlErrorEl.classList.remove('workout__error--message--hidden');
+        }
+        return;
+      }
 
       workout = new Cycling([lat, lng], distance, duration, elevation);
+    }
+
+    // Remove error message if it exists
+    if (!htmlErrorEl.classList.contains('workout__error--message--hidden')) {
+      htmlErrorEl.classList.add('workout__error--message--hidden');
     }
 
     // Add new obj to workout array
@@ -290,7 +320,7 @@ class App {
       </li>
       `;
     }
-    form.insertAdjacentHTML('afterend', html);
+    htmlErrorEl.insertAdjacentHTML('afterend', html);
   }
 
   _moveToPopup(e) {
@@ -353,11 +383,20 @@ class App {
   }
 
   _resetWorkouts() {
-    const confirm = window.confirm('Are you sure you want to delete all workouts?');
-    if(!confirm) return;
+    const confirm = window.confirm(
+      'Are you sure you want to delete all workouts?'
+    );
+    if (!confirm) return;
+    
+    const allWorkouts = document.querySelectorAll('.workout')
+    allWorkouts.forEach(workout => workout.remove())
+    this.#marker.forEach(marker => this.#map.removeLayer(marker))
+    this.#workouts = [];
+    
+    if (this.#workouts.length !== 0) return;
+    resetButton.classList.add('reset__workouts--hidden');
 
     localStorage.removeItem('workouts');
-    location.reload();
   }
 }
 

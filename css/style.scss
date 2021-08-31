@@ -111,6 +111,46 @@ a:visited {
   opacity: 0;
   transition: 0.3s;
 }
+
+.workout__error {
+  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+.workout__error--message {
+  font-size: 1.5rem;
+  text-align: center;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+  color: red;
+  opacity: 100;
+  transition: 2s;
+}
+
+.workout__error--message--hidden {
+  display: none;
+}
+
 .workout--running {
   border-left: 5px solid var(--color-brand--2);
 }
