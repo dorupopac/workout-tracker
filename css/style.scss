@@ -34,6 +34,60 @@ body {
   display: flex;
 }
 
+// Error window
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 60rem;
+  background-color: #f3f3f3;
+  padding: 4rem 6rem;
+  box-shadow: 0 4rem 6rem rgba(0, 0, 0, 0.3);
+  z-index: 1100;
+  transition: all 0.5s;
+  color: black;
+
+  .modal__container {
+    display: flex;
+    align-items: center;
+    i {
+      color: red;
+      font-size: 11rem;
+      margin-right: 1.5rem;
+    }
+
+    .modal__container--item2 {
+      text-align: center;
+      div {
+        margin-top: 1rem;
+        h1 {
+        }
+        p {
+          font-size: 1.4rem;
+        }
+      }
+    }
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  transition: all 0.5s;
+}
+
+.hidden {
+  visibility: hidden;
+  opacity: 0;
+}
+
 /* GENERAL */
 a:link,
 a:visited {
@@ -52,7 +106,7 @@ a:visited {
   .reset__workouts--hidden {
     display: none;
   }
-  
+
   .reset__workouts {
     position: absolute;
     bottom: 1rem;
@@ -113,26 +167,31 @@ a:visited {
 }
 
 .workout__error {
-  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   perspective: 1000px;
 }
 
 @keyframes shake {
-  10%, 90% {
+  10%,
+  90% {
     transform: translate3d(-1px, 0, 0);
   }
-  
-  20%, 80% {
+
+  20%,
+  80% {
     transform: translate3d(2px, 0, 0);
   }
 
-  30%, 50%, 70% {
+  30%,
+  50%,
+  70% {
     transform: translate3d(-4px, 0, 0);
   }
 
-  40%, 60% {
+  40%,
+  60% {
     transform: translate3d(4px, 0, 0);
   }
 }

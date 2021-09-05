@@ -103,11 +103,21 @@ class App {
     if (navigator.geolocation)
       navigator.geolocation.getCurrentPosition(
         this._loadMap.bind(this),
-        function () {
-          document.querySelector('body').innerHTML = ''
-          alert('Could not get your position');
-        }
+        this._refuseLocation.bind(this)
       );
+  }
+
+  _refuseLocation() {
+    const coords = [44.429799, 26.097295];
+    this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(this.#map);
+
+    document.querySelector('.modal').classList.remove('hidden');
+    document.querySelector('.overlay').classList.remove('hidden');
   }
 
   _loadMap(position) {
