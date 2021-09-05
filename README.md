@@ -1,3 +1,5 @@
+live: https://dorumapty.netlify.app/
+
 What this application does:
 
 1. page loads -> the map renders on the user's current location and the workouts found in the localStorage will render
