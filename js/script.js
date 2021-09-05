@@ -104,6 +104,7 @@ class App {
       navigator.geolocation.getCurrentPosition(
         this._loadMap.bind(this),
         function () {
+          document.querySelector('body').innerHTML = ''
           alert('Could not get your position');
         }
       );
@@ -123,12 +124,12 @@ class App {
     }).addTo(this.#map);
 
     // Handling clicks on map
-    this.#map.on('click', this._showForm.bind(this));
+    this.#map.on('click', this._toggleForm.bind(this));
 
     this.#workouts.forEach(work => this._renderWorkoutMarker(work));
   }
 
-  _showForm(mapE) {
+  _toggleForm(mapE) {
     if (!this.#formDisplayed) {
       this.#mapEvent = mapE;
       form.classList.remove('hidden');
@@ -136,28 +137,19 @@ class App {
     }
     if (this.#formDisplayed) {
       form.classList.add('hidden');
-      inputDistance.value =
-        inputDuration.value =
-        inputCadence.value =
-        inputElevation.value =
-          '';
 
-      if (!htmlErrorEl.classList.contains('workout__error--message--hidden')) {
-        htmlErrorEl.classList.add('workout__error--message--hidden');
-      }
+      this._clearInputs();
     }
     this.#formDisplayed = !this.#formDisplayed;
   }
 
   _hideForm() {
-    inputDistance.value =
-      inputDuration.value =
-      inputCadence.value =
-      inputElevation.value =
-        '';
+    this._clearInputs();
 
-    form.style.display = 'none';
+    if (this.#formDisplayed) this.#formDisplayed = !this.#formDisplayed;
+
     form.classList.add('hidden');
+    form.style.display = 'none';
     setTimeout(() => (form.style.display = 'grid'), 1000);
   }
 
@@ -194,6 +186,7 @@ class App {
         form.classList.add('workout__error');
         setTimeout(() => form.classList.remove('workout__error'), 500);
 
+        // Add error msg
         if (htmlErrorEl.classList.contains('workout__error--message--hidden')) {
           htmlErrorEl.classList.remove('workout__error--message--hidden');
         }
@@ -213,6 +206,7 @@ class App {
         form.classList.add('workout__error');
         setTimeout(() => form.classList.remove('workout__error'), 500);
 
+        // Add error msg
         if (htmlErrorEl.classList.contains('workout__error--message--hidden')) {
           htmlErrorEl.classList.remove('workout__error--message--hidden');
         }
@@ -220,11 +214,6 @@ class App {
       }
 
       workout = new Cycling([lat, lng], distance, duration, elevation);
-    }
-
-    // Remove error message if it exists
-    if (!htmlErrorEl.classList.contains('workout__error--message--hidden')) {
-      htmlErrorEl.classList.add('workout__error--message--hidden');
     }
 
     // Add new obj to workout array
@@ -236,7 +225,7 @@ class App {
     // Render workout on the list
     this._renderWorkout(workout);
 
-    // Hide form + clear input fields
+    // Hide form + clear input fields + remove err msg if it exists
     this._hideForm();
 
     // Set local storage to all workouts
@@ -244,8 +233,6 @@ class App {
 
     // Render reset button
     this._toggleResetButton();
-
-    this.#formDisplayed = !this.#formDisplayed;
   }
 
   _renderWorkoutMarker(workout) {
@@ -391,6 +378,7 @@ class App {
     this.#marker.forEach(marker => this.#map.removeLayer(marker));
     this.#workouts = [];
 
+    this._hideForm();
     this._toggleResetButton();
 
     localStorage.removeItem('workouts');
@@ -399,6 +387,18 @@ class App {
   _toggleResetButton() {
     const lengthCondition = this.#workouts.length !== 0 ? 'remove' : 'add';
     resetButton.classList[lengthCondition]('reset__workouts--hidden');
+  }
+
+  _clearInputs() {
+    inputDistance.value =
+      inputDuration.value =
+      inputCadence.value =
+      inputElevation.value =
+        '';
+
+    if (!htmlErrorEl.classList.contains('workout__error--message--hidden')) {
+      htmlErrorEl.classList.add('workout__error--message--hidden');
+    }
   }
 }
 
