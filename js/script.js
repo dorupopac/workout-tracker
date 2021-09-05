@@ -89,8 +89,7 @@ class App {
     this._getLocalStorage();
 
     // Render reset button
-    if (this.#workouts.length !== 0)
-      resetButton.classList.remove('reset__workouts--hidden');
+    this._toggleResetButton();
 
     // Attach event handlers
     form.addEventListener('submit', this._newWorkout.bind(this));
@@ -244,8 +243,7 @@ class App {
     this._setLocalStorage();
 
     // Render reset button
-    if (resetButton.classList.contains('reset__workouts--hidden'))
-      resetButton.classList.remove('reset__workouts--hidden');
+    this._toggleResetButton();
 
     this.#formDisplayed = !this.#formDisplayed;
   }
@@ -378,8 +376,8 @@ class App {
 
     this._setLocalStorage();
 
-    if (this.#workouts.length !== 0) return;
-    resetButton.classList.add('reset__workouts--hidden');
+    // Remove display button if there are 0 workouts in the list
+    this._toggleResetButton();
   }
 
   _resetWorkouts() {
@@ -387,16 +385,20 @@ class App {
       'Are you sure you want to delete all workouts?'
     );
     if (!confirm) return;
-    
-    const allWorkouts = document.querySelectorAll('.workout')
-    allWorkouts.forEach(workout => workout.remove())
-    this.#marker.forEach(marker => this.#map.removeLayer(marker))
+
+    const allWorkouts = document.querySelectorAll('.workout');
+    allWorkouts.forEach(workout => workout.remove());
+    this.#marker.forEach(marker => this.#map.removeLayer(marker));
     this.#workouts = [];
-    
-    if (this.#workouts.length !== 0) return;
-    resetButton.classList.add('reset__workouts--hidden');
+
+    this._toggleResetButton();
 
     localStorage.removeItem('workouts');
+  }
+
+  _toggleResetButton() {
+    const lengthCondition = this.#workouts.length !== 0 ? 'remove' : 'add';
+    resetButton.classList[lengthCondition]('reset__workouts--hidden');
   }
 }
 
