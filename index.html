@@ -24,7 +24,7 @@
       integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
       crossorigin=""
     ></script>
-
+    <script src="https://kit.fontawesome.com/4577078e84.js" crossorigin="anonymous"></script>
     <script defer src="./js/script.js"></script>
     <title>mapty // Map your workouts</title>
   </head>
@@ -123,5 +123,22 @@
       </ul>
     </div>
     <div id="map"></div>
+
+    <!-- Blocked location error -->
+    <div class="modal hidden">
+      <div class="modal__container">
+        <div class="modal__container--item1">
+          <i class="fas fa-exclamation"></i>
+        </div>
+        <div class="modal__container--item2">
+          <h1>Sorry. The application needs your browser's location in order for the map to work.</h1>
+          <div>
+            <p>Don't worry, it only knows your city, not your street address.</p>
+            <p>Click on the icon left of the address to give access.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="overlay hidden"></div>
   </body>
 </html>
