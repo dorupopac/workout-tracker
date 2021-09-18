@@ -1,1 +1,1 @@
-doru-workout-tracker.netlify.app
+https://doru-workout-tracker.netlify.app/
